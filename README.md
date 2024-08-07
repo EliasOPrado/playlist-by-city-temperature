@@ -98,7 +98,7 @@ Com isso o projeto irá iniciar.
 Rodando a aplicação localmente você podera seguir o seguinte padrão de url:
 <br>
 ```
-[http://localhost:8000/api/playlist/](http://localhost:8000/api/playlist/)<str: city>
+http://localhost:8000/api/playlist/<str: city>
 ```
 
 Você também poderá seguir com o link do projeto que esta na nuvem com a seguinte url de exemplo:
