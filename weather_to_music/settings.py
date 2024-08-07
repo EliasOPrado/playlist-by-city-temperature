@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-x))i2$yxx+sz$kplgc_#wgcze9f_yibf$)_qm+*z^%sa0nvo=$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["playlist-by-city-temperature.onrender.com", "localhost", "127.0.0.1"]
 
 # Load environment variables from .env file
 load_dotenv()
