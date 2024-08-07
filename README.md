@@ -92,6 +92,20 @@ docker compose up --build
 ```
 
 Com isso o projeto irá iniciar.
+<br>
+## Endpoints
+
+Rodando a aplicação localmente você podera seguir o seguinte padrão de url:
+<br>
+```
+[http://localhost:8000/api/playlist/](http://localhost:8000/api/playlist/)<str: city>
+```
+
+Você também poderá seguir com o link do projeto que esta na nuvem com a seguinte url de exemplo:
+<br>
+```
+https://playlist-by-city-temperature.onrender.com/api/playlist/london/
+```
 
 ## Detalhes das funcionalidades 💻
 
@@ -193,7 +207,7 @@ def get_playlist_by_genre(genre):
          )
 ```
 
-Por ultimo uma APIView chamada <span class="colour" style="color: rgb(139, 233, 253);">`PlaylistByCityTemperatureAPIView `</span> foi criada para gerenciar a logica entre esses dois services, adicionar a logica necessaria para retornar as lista necessaria baseando-se nos critérios do desafio e gerenciar possiveis erros. Usando try e catch exceptions com mensagens de erros intuitivas para futuras manutenções.
+Por ultimo uma APIView chamada <span class="colour" style="color:rgb(139, 233, 253)">`PlaylistByCityTemperatureAPIView`</span> foi criada para gerenciar a logica entre esses dois services, adicionar a logica necessaria para retornar as lista necessaria baseando-se nos critérios do desafio e gerenciar possiveis erros. Usando try e catch exceptions com mensagens de erros intuitivas para futuras manutenções.
 <br>
 ``` python
 class PlaylistByCityTemperatureAPIView(APIView):
@@ -249,18 +263,3 @@ Nos testes foram usando `mock` para não consumir as APIs excessivamente.
 ## Controle de versão 🌿
 
 Durante o desenvolvimento deste projeto, acabei fazendo push diretamente para a branch `master`, sem criar branches separadas para cada conjunto de alterações. Embora eu tenha conhecimento da importância de criar branches para cada nova funcionalidade ou tarefa, a pressão do tempo e a necessidade de entregar rapidamente me levaram a seguir esse caminho. Percebi o erro após já ter avançado parte do projeto, e, devido às circunstâncias, optei por manter esse padrão até a conclusão.
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
