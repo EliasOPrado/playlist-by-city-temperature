@@ -1,2 +1,122 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Django specific
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+
+# Environment variables
+.env
+
+# MacOS
+.DS_Store
+
+# Virtual environments
+env/
 venv/
-venv
+ENV/
+VENV/
+env.bak/
+venv.bak/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Node modules (if using Node.js tools like npm or yarn)
+node_modules/
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+*.cover
+coverage.xml
+*.coveragerc
+
+# Translations
+*.mo
+*.pot
+
+# Database files
+*.sqlite3
+*.db
+
+# Static files
+/static/
+staticfiles/
+mediafiles/
+media/
+
+# Backup files
+*.bak
+*.swp
+
+# Pytest
+.pytest_cache/
+*.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Django Migrations
+**/migrations/**/ (excluding __init__.py files)
+**/migrations/*.pyc
+
+# Django cache files
+**/cache/**
+
+# Bandit security scan report
+bandit_report.json
+
+# AWS Elastic Beanstalk files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg
+
+# PyCharm
+/.idea/
+
+# pylint
+pylint-output.txt
+
+# Other IDEs
+*.idea/*
+*.vscode/*
+*.ropeproject/*
+
+# Log files
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Black formatter
+.cache/
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+
+# Flask secret key file
+instance/
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Security
+secrets.json

@@ -1,6 +1,5 @@
 import requests
 import logging
-from django.shortcuts import render
 from django.conf import settings
 from django.http import JsonResponse
 
@@ -13,7 +12,7 @@ SPOTIFY_CLIENT_ID = settings.SPOTIFY_CLIENT_ID
 SPOTIFY_CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
 
 
-def get_temperature_by_city(request, city):
+def get_temperature_by_city(city):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}"
 
     try:
@@ -68,7 +67,7 @@ def get_spotify_access_token():
         return None
 
 
-def get_playlist_by_genre(request, genre):
+def get_playlist_by_genre(genre):
     access_token = get_spotify_access_token()
     if not access_token:
         return JsonResponse(
