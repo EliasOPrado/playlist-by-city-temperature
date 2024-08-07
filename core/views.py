@@ -1,108 +1,39 @@
-import requests
-import logging
-from django.shortcuts import render
-from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from django.http import JsonResponse
-
-# Set up logging
-logger = logging.getLogger(__name__)
-
-# Retrieve API keys from settings
-WEATHER_API_KEY = settings.WEATHER_API_KEY
-SPOTIFY_CLIENT_ID = settings.SPOTIFY_CLIENT_ID
-SPOTIFY_CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
+from core.services import get_temperature_by_city, get_playlist_by_genre
 
 
-def get_temperature_by_city(request, city):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}"
+class PlaylistByCityTemperatureAPIView(APIView):
+    def get(self, request, city, format=None):
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an HTTPError for bad responses
-        data = response.json()
+        temp_data = get_temperature_by_city(city)
 
-        # Validate that 'main' and 'temp' keys exist
-        if "main" in data and "temp" in data["main"]:
-            temp = int(data["main"]["temp"] - 273.15)
-            return JsonResponse(
-                {"city": data["name"], "temperature": temp},
-                json_dumps_params={"ensure_ascii": False},
-            )
-        else:
-            logger.error("Unexpected response format: %s", data)
-            return JsonResponse({"error": "Unexpected response format"}, status=500)
+        if "error" in temp_data:
+            return Response(temp_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    except requests.exceptions.RequestException as e:
-        logger.error("Error fetching weather data: %s", e)
-        return JsonResponse(
-            {"error": "Error fetching weather data"},
-            status=response.status_code if response else 500,
-        )
+        temperature = temp_data["temperature"]
 
+        match temperature:
+            case t if t > 25:
+                genre = "pop"
+            case t if 10 <= t <= 25:
+                genre = "rock"
+            case t if t < 10:
+                genre = "classical"
 
-def get_spotify_access_token():
-    url = "https://accounts.spotify.com/api/token"
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    data = {
-        "grant_type": "client_credentials",
-        "client_id": SPOTIFY_CLIENT_ID,
-        "client_secret": SPOTIFY_CLIENT_SECRET,
-    }
+        playlists = get_playlist_by_genre(genre)
 
-    try:
-        response = requests.post(url, headers=headers, data=data)
-        response.raise_for_status()  # Raise an HTTPError for bad responses
-        response_data = response.json()
+        if "error" in playlists:
+            return Response(playlists, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Check if access token is present
-        if "access_token" in response_data:
-            return response_data["access_token"]
-        else:
-            logger.error("Failed to retrieve access token: %s", response_data)
-            return None
-
-    except requests.exceptions.RequestException as e:
-        logger.error("Error retrieving Spotify access token: %s", e)
-        return None
-
-
-def get_playlist_by_genre(request, genre):
-    access_token = get_spotify_access_token()
-    if not access_token:
-        return JsonResponse(
-            {"error": "Failed to retrieve Spotify access token"}, status=500
-        )
-
-    url = f"https://api.spotify.com/v1/search?q=genre:{genre}&type=album&limit=10"
-    headers = {"Authorization": f"Bearer {access_token}"}
-
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise an HTTPError for bad responses
-        data = response.json()
-
-        # Validate that 'albums' and 'items' keys exist
-        if "albums" in data and "items" in data["albums"]:
-            albums = [
-                {
-                    "name": album["name"],
-                    "artist": album["artists"][0]["name"],
-                    "release_date": album["release_date"],
-                    "url": album["external_urls"]["spotify"],
-                    "genre": genre,
-                }
-                for album in data["albums"]["items"]
-            ]
-            return JsonResponse(albums, safe=False)
-        else:
-            logger.error("Unexpected response format: %s", data)
-            return JsonResponse({"error": "Unexpected response format"}, status=500)
-
-    except requests.exceptions.RequestException as e:
-        logger.error("Error fetching albums by genre: %s", e)
-        return JsonResponse(
-            {"error": "Failed to fetch albums by genre"},
-            status=response.status_code if response else 500,
+        return Response(
+            {
+                "city": city,
+                "temperature": f"{temperature} degree celcius",
+                "genre": genre,
+                "playlists": playlists,
+            },
+            status=status.HTTP_200_OK,
         )
