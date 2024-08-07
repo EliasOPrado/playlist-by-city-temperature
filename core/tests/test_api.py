@@ -6,9 +6,11 @@ from rest_framework import status
 
 class TestEndpoints(TestCase):
 
-    @patch('core.views.get_temperature_by_city')
-    @patch('core.views.get_playlist_by_genre')
-    def test_get_playlist_by_city_temperature(self, mock_get_playlist, mock_get_temperature):
+    @patch("core.views.get_temperature_by_city")
+    @patch("core.views.get_playlist_by_genre")
+    def test_get_playlist_by_city_temperature(
+        self, mock_get_playlist, mock_get_temperature
+    ):
 
         mock_get_temperature.return_value = {"city": "London", "temperature": 15}
 
@@ -22,23 +24,66 @@ class TestEndpoints(TestCase):
             }
         ]
 
-        url = reverse('playlist-by-city-temperature', args=['London'])
+        url = reverse("playlist-by-city-temperature", args=["London"])
 
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        mock_get_temperature.assert_called_once_with('London')
-        mock_get_playlist.assert_called_once_with('rock')
+        mock_get_temperature.assert_called_once_with("London")
+        mock_get_playlist.assert_called_once_with("rock")
 
         response_data = response.json()
 
-        self.assertIn('city', response_data)
-        self.assertIn('temperature', response_data)
-        self.assertIn('genre', response_data)
-        self.assertIn('playlists', response_data)
-        self.assertEqual(response_data['city'], 'London')
-        self.assertEqual(response_data['temperature'], "15 degree celcius")
-        self.assertEqual(response_data['genre'], 'rock')
-        self.assertEqual(len(response_data['playlists']), 1)
-        self.assertEqual(response_data['playlists'][0]['name'], 'Rock Album')
+        self.assertIn("city", response_data)
+        self.assertIn("temperature", response_data)
+        self.assertIn("genre", response_data)
+        self.assertIn("playlists", response_data)
+        self.assertEqual(response_data["city"], "London")
+        self.assertEqual(response_data["temperature"], "15 degree celcius")
+        self.assertEqual(response_data["genre"], "rock")
+        self.assertEqual(len(response_data["playlists"]), 1)
+        self.assertEqual(response_data["playlists"][0]["name"], "Rock Album")
+
+    @patch("core.views.get_temperature_by_city")
+    def test_get_playlist_by_city_temperature_first_bad_request(
+        self, mock_get_temperature
+    ):
+
+        mock_get_temperature.return_value = {}
+
+        url = reverse("playlist-by-city-temperature", args=["London"])
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        response_data = response.json()
+
+        self.assertIn("error", response_data)
+        self.assertEqual(
+            response_data["error"],
+            "Failed to retrieve temperature data for London: No temperature data returned",
+        )
+
+    @patch("core.views.get_temperature_by_city")
+    @patch("core.views.get_playlist_by_genre")
+    def test_get_playlist_by_city_temperature_second_bad_request(
+        self, mock_get_playlist, mock_get_temperature
+    ):
+        mock_get_temperature.return_value = {"city": "London", "temperature": 15}
+        mock_get_playlist.return_value = []
+
+        url = reverse("playlist-by-city-temperature", args=["London"])
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        response_data = response.json()
+        print(response_data)
+        self.assertIn("error", response_data)
+        self.assertEqual(
+            response_data["error"],
+            "Failed to retrieve playlists for genre rock: No playlists data returned or incorrect format",
+        )

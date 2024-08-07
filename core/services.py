@@ -3,10 +3,8 @@ import logging
 from django.conf import settings
 from django.http import JsonResponse
 
-# Set up logging
 logger = logging.getLogger(__name__)
 
-# Retrieve API keys from settings
 WEATHER_API_KEY = settings.WEATHER_API_KEY
 SPOTIFY_CLIENT_ID = settings.SPOTIFY_CLIENT_ID
 SPOTIFY_CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
